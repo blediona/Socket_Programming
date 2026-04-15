@@ -38,6 +38,25 @@ public class UDPServer {
             }
 
 
+            //pjesa e kodit qe mirret mesazhi nga nje klient dhe shperndahet te klientet e tjere
+            
+            String response = message;
+            byte sendData = response.getBytes();
+
+            for(SocketAddress addr : clients){
+                if(!addr.equals(clientAddress)){
+
+                    InetSocketAddress inetAddr = (InetSocketAddress) addr;
+
+                    DatagramPacket sendPacket = new DatagramPacket(
+                        sendData,
+                        sendData.length,
+                        inetAddr.getAddress(),
+                        inetAddr.getPort()
+                    );
+                    serverSocket.send(sendPacket);
+                }
+            }
 
 
         } catch (Exception e) {
