@@ -27,3 +27,30 @@ public class FileService {
 
         return sb.toString();
     }
+        public String readFile(String fileName) throws IOException {
+        Path file = safeResolve(fileName);
+
+        if (!Files.exists(file)) {
+            return "File nuk ekziston.";
+        }
+
+        if (Files.isDirectory(file)) {
+            return "Ky eshte folder, jo file.";
+        }
+
+        return Files.readString(file, StandardCharsets.UTF_8);
+    }
+
+    public String writeFile(String fileName, String content) throws IOException {
+        Path file = safeResolve(fileName);
+
+        Files.writeString(
+                file,
+                content + System.lineSeparator(),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+        );
+
+        return "Shkrimi ne file u krye me sukses.";
+    }
