@@ -70,11 +70,80 @@ public class UDPServer {
             }
         }
 
+
+    private static void setupUsers() {
+            allowedUsers.put("admin1", EnumSet.of(Permission.READ, Permission.WRITE, Permission.EXECUTE));
+            allowedUsers.put("client2", EnumSet.of(Permission.READ));
+            allowedUsers.put("client3", EnumSet.of(Permission.READ));
+            allowedUsers.put("client4", EnumSet.of(Permission.READ));
+        }
+
+    //pjesa e kodit qe kthen mesazh te klienti ne baze te komandes se dhene nga ana e tij
+    private static String processRequest(String request, SocketAddress clientAddress) {
+            try {
+                if (request.isBlank()) {
+                    return "Kerkese e zbrazet.";
+                }
+
+                String[] parts = request.split(" ", 3);
+                String command = parts[0].toUpperCase();
+
+                switch (command) {
+                    case "REGISTER":
+                        return registerClient(parts, clientAddress);
+
+                    case "LIST":
+                        return listFiles(clientAddress);
+
+                    case "READ":
+                        return readFile(parts, clientAddress);
+
+                    case "WRITE":
+                        return writeFile(parts, clientAddress);
+
+                    case "EXECUTE":
+                        return executeFile(parts, clientAddress);
+
+                    case "EXIT":
+                        connectedClients.remove(clientAddress);
+                        return "Klienti u largua nga serveri.";
+
+                    default:
+                        return "Komande e panjohur.";
+                }
+
+            } catch (Exception e) {
+                return "Gabim: " + e.getMessage();
+            }
+        }
+
+
+    //pjesa e kodit qe verifikon username dhe e regjistron klientin ne server nese eshte i vlefshem
+    private static String registerClient(String[] parts, SocketAddress clientAddress) {
+            if (parts.length < 2) {
+                return "Perdorimi: REGISTER <username>";
+            }
+
+            String username = parts[1].trim();
+
+            if (!allowedUsers.containsKey(username)) {
+                return "Ky username nuk lejohet.";
+            }
+
+            ClientInfo clientInfo = new ClientInfo(username, clientAddress, allowedUsers.get(username));
+            connectedClients.put(clientAddress, clientInfo);
+
+            return "Regjistrimi u krye me sukses. Perdoruesi: " + username +
+                    " | Privilegjet: " + clientInfo.getPermissions();
+        }
+
+    private static ClientInfo getClient(SocketAddress address) {
+        return connectedClients.get(address);
     }
 
- private static void setupUsers() {
-        allowedUsers.put("admin1", EnumSet.of(Permission.READ, Permission.WRITE, Permission.EXECUTE));
-        allowedUsers.put("client2", EnumSet.of(Permission.READ));
-        allowedUsers.put("client3", EnumSet.of(Permission.READ));
-        allowedUsers.put("client4", EnumSet.of(Permission.READ));
-    }
+
+
+
+
+
+}
