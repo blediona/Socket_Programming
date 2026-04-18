@@ -34,53 +34,47 @@ public class UDPServer {
 
 
 
-            // pjesa e kodit me te cilen serveri qendron vazhdimisht i hapur dhe ne dispozicion 
-            //per te pritur mesazhe te klienteve
-            while(true){
-                byte[] receiveData = new byte[1024];
-                DatagramPacket receivePacket = new
+            // loop kryesor i UDP serverit qe pranon kerkesat nga klientet, i perpunon ato dhe dergon pergjigje
+           while (true) {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                DatagramPacket requestPacket = new DatagramPacket(buffer, buffer.length);
+                serverSocket.receive(requestPacket);
 
-                DatagramPacket(receiveData, receiveData.length);
-                serverSocket.receive(receivePacket);
+                String request = new String(
+                        requestPacket.getData(),
+                        0,
+                        requestPacket.getLength(),
+                        StandardCharsets.UTF_8
+                ).trim();
 
-                String message = new String(receivePacket.getData(),0, receivePacket.getLength());
-                SocketAddress clientAddress = receivePacket.getSocketAddress();
+                SocketAddress clientAddress = requestPacket.getSocketAddress();
 
-                if(!clients.contains(clientAddress)){
-                    clients.add(clientAddress);
-                    System.out.println("New client connected: " + clientAddress);
-                    System.out.println("Total connected clients: " + clients.size());
-                }
+                System.out.println("Kerkese nga " + clientAddress + ": " + request);
 
-                System.out.println("Received from " + clientAddress + ": " + message);
+                String response = processRequest(request, clientAddress);
 
+                byte[] responseData = response.getBytes(StandardCharsets.UTF_8);
+                DatagramPacket responsePacket = new DatagramPacket(
+                        responseData,
+                        responseData.length,
+                        requestPacket.getAddress(),
+                        requestPacket.getPort()
+                );
+
+                serverSocket.send(responsePacket);
             }
 
-
-            //pjesa e kodit qe mirret mesazhi nga nje klient dhe shperndahet te klientet e tjere
-            
-            String response = message;
-            byte sendData = response.getBytes();
-
-            for(SocketAddress addr : clients){
-                if(!addr.equals(clientAddress)){
-
-                    InetSocketAddress inetAddr = (InetSocketAddress) addr;
-
-                    DatagramPacket sendPacket = new DatagramPacket(
-                        sendData,
-                        sendData.length,
-                        inetAddr.getAddress(),
-                        inetAddr.getPort()
-                    );
-                    serverSocket.send(sendPacket);
-                }
+            } catch (Exception e) {
+                System.out.println("Gabim ne server: " + e.getMessage());
+                e.printStackTrace();
             }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
     }
-    
-}
+
+ private static void setupUsers() {
+        allowedUsers.put("admin1", EnumSet.of(Permission.READ, Permission.WRITE, Permission.EXECUTE));
+        allowedUsers.put("client2", EnumSet.of(Permission.READ));
+        allowedUsers.put("client3", EnumSet.of(Permission.READ));
+        allowedUsers.put("client4", EnumSet.of(Permission.READ));
+    }
