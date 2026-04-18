@@ -18,14 +18,20 @@ public class UDPServer {
     public static void main(String[] args) {
         try {
 
-            
-            DatagramSocket serverSocket = new DatagramSocket(9876);
+            //pjesa e kodit per inicializimin e UDP serverit/ pergatitja e tij per komunikim
+            setupUsers();
+            fileService = new FileService("server_files");
 
-            // me kete pjese te kodit arrijme ti ruajme klientet ne nje list
-            HashSet<SocketAddress> clients = new HashSet<>();
+            DatagramSocket serverSocket = new DatagramSocket(PORT);
 
+            String serverIp = InetAddress.getLocalHost().getHostAddress();
 
-            System.out.println("Server is running...");
+            System.out.println("==================================");
+            System.out.println("UDP Server eshte aktiv");
+            System.out.println("IP: " + serverIp);
+            System.out.println("PORT: " + PORT);
+            System.out.println("==================================");
+
 
 
             // pjesa e kodit me te cilen serveri qendron vazhdimisht i hapur dhe ne dispozicion 
