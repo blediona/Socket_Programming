@@ -2,10 +2,23 @@ package server;
 
 import java.net.*;
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 
 public class UDPServer {
+
+    private static final int PORT = 9876;
+    private static final int BUFFER_SIZE = 4096;
+
+    private static final Map<String, Set<Permission>> allowedUsers = new HashMap<>();
+    private static final Map<SocketAddress, ClientInfo> connectedClients = new HashMap<>();
+
+    private static FileService fileService;
+
+
     public static void main(String[] args) {
         try {
+
+            
             DatagramSocket serverSocket = new DatagramSocket(9876);
 
             // me kete pjese te kodit arrijme ti ruajme klientet ne nje list
