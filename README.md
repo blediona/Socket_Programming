@@ -136,11 +136,6 @@ LIST
 - Server processes requests independently
 - Ensure port 9876 is open
 
----
-
-## Authors
-- Your Name
-- Team Members
 
 ---
 
