@@ -143,22 +143,77 @@ public class UDPServer {
 
     //metoda qe kthen listen e fajllave ne server nese klienti eshte i regjistruar dhe ka read permission
     private static String listFiles(SocketAddress clientAddress) throws Exception {
-        
+        ClientInfo client = getClient(clientAddress);
+
+        if (client == null) {
+            return "Duhet te beni REGISTER fillimisht.";
+        }
+
+        if (!client.hasPermission(Permission.READ)) {
+            return "Nuk keni READ permission.";
+        }
+
+        return "Files ne server:\n" + fileService.listFiles();
     }
 
     //metoda qe lexon permbajtjen e nje fajlli te dhene nese klienti ka read permission dhe jep filename korrekt
     private static String readFile(String[] parts, SocketAddress clientAddress) throws Exception {
-        
+        ClientInfo client = getClient(clientAddress);
+
+        if (client == null) {
+            return "Duhet te beni REGISTER fillimisht.";
+        }
+
+        if (!client.hasPermission(Permission.READ)) {
+            return "Nuk keni READ permission.";
+        }
+
+        if (parts.length < 2) {
+            return "Perdorimi: READ <filename>";
+        }
+
+        return fileService.readFile(parts[1].trim());
     }
 
     // metoda qe shkruan tekst ne nje fajll te caktuar nese klienti ka write permission dhe jep parametrat e duhur
     private static String writeFile(String[] parts, SocketAddress clientAddress) throws Exception {
-        
+        ClientInfo client = getClient(clientAddress);
+
+        if (client == null) {
+            return "Duhet te beni REGISTER fillimisht.";
+        }
+
+        if (!client.hasPermission(Permission.WRITE)) {
+            return "Nuk keni WRITE permission.";
+        }
+
+        if (parts.length < 3) {
+            return "Perdorimi: WRITE <filename> <text>";
+        }
+
+        String fileName = parts[1].trim();
+        String content = parts[2].trim();
+
+        return fileService.writeFile(fileName, content);
     }
 
     // metoda qe ekzekuton nje fajll te caktuar nese klienti ka execute permission dhe jep filename
     private static String executeFile(String[] parts, SocketAddress clientAddress) throws Exception {
-        
+        ClientInfo client = getClient(clientAddress);
+
+        if (client == null) {
+            return "Duhet te beni REGISTER fillimisht.";
+        }
+
+        if (!client.hasPermission(Permission.EXECUTE)) {
+            return "Nuk keni EXECUTE permission.";
+        }
+
+        if (parts.length < 2) {
+            return "Perdorimi: EXECUTE <filename>";
+        }
+
+        return fileService.executeFile(parts[1].trim());
     }
 }
 
