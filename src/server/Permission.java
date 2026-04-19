@@ -1,7 +1,3 @@
 package server;
 
-public enum Permission {
-    READ,
-    WRITE,
-    EXECUTE
-}
+public enum Permission {READ, WRITE, EXECUTE}
