@@ -22,7 +22,7 @@ public class ClientInfo {
         return address;
     }
 
-    public Set<Permission>getPermission(){
+    public Set<Permission> getPermissions(){
         return permissions;
     }
 
