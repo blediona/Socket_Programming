@@ -54,3 +54,41 @@ public class FileService {
 
         return "Shkrimi ne file u krye me sukses.";
     }
+        public String executeFile(String fileName) throws IOException, InterruptedException {
+        Path file = safeResolve(fileName);
+
+        if (!Files.exists(file)) {
+            return "File nuk ekziston.";
+        }
+
+        if (Files.isDirectory(file)) {
+            return "Nuk mund te ekzekutohet folderi.";
+        }
+
+        String os = System.getProperty("os.name").toLowerCase();
+        ProcessBuilder pb;
+
+        if (os.contains("win")) {
+            pb = new ProcessBuilder("cmd", "/c", file.toString());
+        } else {
+            pb = new ProcessBuilder("sh", file.toString());
+        }
+
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+        }
+
+        int exitCode = process.waitFor();
+
+        return "Ekzekutimi perfundoi. Exit code = " + exitCode +
+                (output.length() > 0 ? "\nOutput:\n" + output : "");
+    }
+}
