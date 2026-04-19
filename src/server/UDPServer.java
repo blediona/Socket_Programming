@@ -78,7 +78,7 @@ public class UDPServer {
             allowedUsers.put("client4", EnumSet.of(Permission.READ));
         }
 
-    //pjesa e kodit qe kthen mesazh te klienti ne baze te komandes se dhene nga ana e tij
+    //metoda qe kthen mesazh te klienti ne baze te komandes se dhene nga ana e tij
     private static String processRequest(String request, SocketAddress clientAddress) {
             try {
                 if (request.isBlank()) {
@@ -118,7 +118,7 @@ public class UDPServer {
         }
 
 
-    //pjesa e kodit qe verifikon username dhe e regjistron klientin ne server nese eshte i vlefshem
+    //metoda qe verifikon username dhe e regjistron klientin ne server nese eshte i vlefshem
     private static String registerClient(String[] parts, SocketAddress clientAddress) {
             if (parts.length < 2) {
                 return "Perdorimi: REGISTER <username>";
@@ -141,9 +141,26 @@ public class UDPServer {
         return connectedClients.get(address);
     }
 
+    //metoda qe kthen listen e fajllave ne server nese klienti eshte i regjistruar dhe ka read permission
+    private static String listFiles(SocketAddress clientAddress) throws Exception {
+        
+    }
 
+    //metoda qe lexon permbajtjen e nje fajlli te dhene nese klienti ka read permission dhe jep filename korrekt
+    private static String readFile(String[] parts, SocketAddress clientAddress) throws Exception {
+        
+    }
 
+    // metoda qe shkruan tekst ne nje fajll te caktuar nese klienti ka write permission dhe jep parametrat e duhur
+    private static String writeFile(String[] parts, SocketAddress clientAddress) throws Exception {
+        
+    }
 
-
-
+    // metoda qe ekzekuton nje fajll te caktuar nese klienti ka execute permission dhe jep filename
+    private static String executeFile(String[] parts, SocketAddress clientAddress) throws Exception {
+        
+    }
 }
+
+
+
