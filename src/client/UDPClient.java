@@ -24,19 +24,43 @@ public class UDPClient {
             System.out.println("Lidhja u pergatit me sukses.");
             System.out.println("Komanda e pare duhet te jete: REGISTER <username>");
 
-            while(true){
-                System.out.print("Klienti>");
+            while(true) {
+                System.out.print("Klienti> ");
                 String message = scanner.nextLine().trim();
 
-                if(message.isBlank()){
+                if (message.isBlank()) {
                     continue;
                 }
 
                 byte[] sendData = message.getBytes(StandardCharsets.UTF_8);
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
+                DatagramPacket sendPacket = new DatagramPacket(sendData,
+                        sendData.length,
+                        serverAddress,
+                        serverPort
+                );
 
                 clientSocket.send(sendPacket);
+
+                byte[] receiveBuffer = new byte[BUFFER_SIZE];
+                DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+                clientSocket.receive(receivePacket);
+
+                String response = new String(
+                        receivePacket.getData(),
+                        0,
+                        receivePacket.getLength(),
+                        StandardCharsets.UTF_8
+                );
+
+                System.out.println("Pergjigjja nga serveri: ");
+                System.out.println(response);
+
+                if (message.equalsIgnoreCase("EXIT")) {
+                    break;
+                }
             }
+
+            clientSocket.close();
 
         } catch (Exception e){
             System.out.println("Gabim ne klient: " + e.getMessage());
